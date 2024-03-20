@@ -4,7 +4,7 @@ import os
 import json
 
 # URL 입력
-url = 'https://www.youtube.com/watch?v=nO8xsBDGuAg'
+url = 'https://www.youtube.com/watch?v=uAmv-8NUGGc'
 # YouTube 객체 생성
 yt = YouTube(url)
 
@@ -15,14 +15,24 @@ os.makedirs(output_folder, exist_ok=True)  # 만약 폴더가 존재하지 않�
 # 파일명으로 허용되지 않는 문자 제거 및 공백 대체
 cleaned_title = re.sub(r'[^\w\s-]', '', yt.title).strip().replace(' ', '_')
 
+# 썸네일 이미지 가져오기
+thumbnail_url = yt.thumbnail_url
+
 # 오디오 다운로드
 audio_file_path = os.path.join(output_folder, cleaned_title + '.mp3')
 yt.streams.filter(only_audio=True).first().download(
     output_path=output_folder, filename=cleaned_title + '.mp3'
 )
 
-# JSON 파일에 제목과 URL 추가
-data = {cleaned_title: url}
+# JSON data (video title, URL, and thumbnail URL)
+data = {
+  cleaned_title :{
+    'title': yt.title,
+    "url": url,
+    "thumbnail_url": thumbnail_url
+  }
+}
+
 json_file_path = os.path.join('assets', 'audio_urls.json')
 
 # JSON 파일이 이미 존재하는 경우 데이터 추가
