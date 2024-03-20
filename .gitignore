@@ -31,7 +31,8 @@ MANIFEST
 ./asstes
 asstes/
 audio/
-
+summarize_youtube_video_lecture-main/
+.summarize_youtube_video_lecture-main
 
 # PyInstaller
 #  Usually these files are written by a python script from a template
