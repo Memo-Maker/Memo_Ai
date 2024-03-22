@@ -14,7 +14,7 @@ MEMO_AI_directory = os.path.dirname(script_directory)
 # 경로를 조립해서 오디오파일 경로로 만듦
 audio_file_path = os.path.join(MEMO_AI_directory, additional_path, audio_file_name)
 
-print(f" >> audio_file_path = {audio_file_path}")
+print(f" -->> audio_file_path = {audio_file_path}")
 
 
 try:
@@ -25,7 +25,7 @@ try:
         raise FileNotFoundError("오디오 파일을 찾을 수 없습니다.")
     
     # tiny, base, small, medium, large
-    model = whisper.load_model('base')
+    model = whisper.load_model('medium')
     result = model.transcribe(audio_file_path)
     print(result['text'])
     

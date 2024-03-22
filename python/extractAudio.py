@@ -3,8 +3,10 @@ import re
 import os
 import json
 
+print("🟢 extractAudio.py 시작")
+
 # URL 입력
-url = 'https://www.youtube.com/watch?v=uAmv-8NUGGc'
+url = 'https://youtu.be/nspco5QyZwo?si=yPG2ZxNat-ypSQgi'
 # YouTube 객체 생성
 yt = YouTube(url)
 
