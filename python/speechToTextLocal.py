@@ -28,6 +28,7 @@ try:
     model = whisper.load_model('medium')
     result = model.transcribe(audio_file_path)
     print(result['text'])
+    print(str(len(result['text'])) + "자")
     
     end_time = time.time()  # 종료 시간 기록
     elapsed_time = end_time - start_time  # 전체 실행 시간 계산
