@@ -6,7 +6,7 @@ import json
 print("🟢 extractAudio.py 시작")
 
 # URL 입력
-url = 'https://youtu.be/nspco5QyZwo?si=yPG2ZxNat-ypSQgi'
+url = 'https://www.youtube.com/watch?v=6almnz56oNg'
 # YouTube 객체 생성
 yt = YouTube(url)
 
@@ -20,6 +20,9 @@ cleaned_title = re.sub(r'[^\w\s-]', '', yt.title).strip().replace(' ', '_')
 # 썸네일 이미지 가져오기
 thumbnail_url = yt.thumbnail_url
 
+# 영상의 길이(초) 가져오기
+video_length_seconds = yt.length
+
 # 오디오 다운로드
 audio_file_path = os.path.join(output_folder, cleaned_title + '.mp3')
 yt.streams.filter(only_audio=True).first().download(
@@ -31,7 +34,8 @@ data = {
   cleaned_title :{
     'title': yt.title,
     "url": url,
-    "thumbnail_url": thumbnail_url
+    "thumbnail_url": thumbnail_url,
+    "video_duration" : video_length_seconds
   }
 }
 
