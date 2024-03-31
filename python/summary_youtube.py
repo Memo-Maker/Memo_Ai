@@ -1,5 +1,8 @@
-import whisper
+from pytube import YouTube
+import re
 import os
+import json
+import whisper
 import time
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain.schema.document import Document
@@ -17,14 +20,73 @@ load_dotenv()
 # API 키 가져오기
 API_KEY = os.getenv("OPENAI_API_KEY")
 
-# #### Audio
-# 오디오파일 이름
-audio_file_name = "전세사기_피해자가_대응_플랫폼_만들었다_전세위키_등장_전세사기대책위원회와_함께_만들었습니다.mp3"
+print("🟢 extractAudio.py 시작")
 
-#   경로
+# URL 입력
+# url = 'https://youtu.be/nspco5QyZwo?si=yPG2ZxNat-ypSQgi'
+url = input("URL 입력 : ")
+
+# YouTube 객체 생성
+yt = YouTube(url)
+
+# 폴더 경로 설정
+output_folder = os.path.join('./assets', 'audio')
+os.makedirs(output_folder, exist_ok=True)  # 만약 폴더가 존재하지 않으면 생성
+
+# 파일명으로 허용되지 않는 문자 제거 및 공백 대체
+cleaned_title = re.sub(r'[^\w\s-]', '', yt.title).strip().replace(' ', '_')
+
+# 썸네일 이미지 가져오기
+thumbnail_url = yt.thumbnail_url
+
+# 영상의 길이(초) 가져오기
+video_length_seconds = yt.length
+
+# # video_length_seconds에 따라서 660의 배수에 따라 값이 변하도록 설정합니다.
+# if video_length_seconds < 660:
+#     summary_words = 100
+# else:
+#     summary_words = ((video_length_seconds // 660) * 100) + 100
+
+# print(f"summary_words = {summary_words}")
+
+# 오디오 다운로드
+audio_file_path = os.path.join(output_folder, cleaned_title + '.mp3')
+yt.streams.filter(only_audio=True).first().download(
+    output_path=output_folder, filename=cleaned_title + '.mp3'
+)
+
+# JSON data (video title, URL, and thumbnail URL)
+data = {
+    cleaned_title :{
+        'title': yt.title,
+        "url": url,
+        "thumbnail_url": thumbnail_url,
+        "video_duration" : video_length_seconds
+    }
+}
+
+json_file_path = os.path.join('assets', 'audio_urls.json')
+
+# JSON 파일이 이미 존재하는 경우 데이터 추가
+if os.path.exists(json_file_path):
+    with open(json_file_path, 'r', encoding='utf-8') as f:  # UTF-8 인코딩으로 파일 열기
+        existing_data = json.load(f)
+    existing_data.update(data)
+    data = existing_data
+
+with open(json_file_path, 'w', encoding='utf-8') as f:  # UTF-8 인코딩으로 파일 쓰기
+    json.dump(data, f, indent=4, ensure_ascii=False)
+
+print("🔴 extractAudio.py 종료")
+
+
+
+audio_file_name = f"{cleaned_title}.mp3"
+additional_path = r"assets\audio"  # 추가적인 경로
+
 # 스크립트 파일이 있는 디렉토리의 절대 경로를 기반으로 오디오 파일의 경로를 설정합니다.
 # script_directory는 현재 파이썬 프로젝트가 있는 위치를 말함
-additional_path = r"assets\audio"  # 추가적인 경로
 script_directory = os.path.dirname(os.path.abspath(__file__))
 MEMO_AI_directory = os.path.dirname(script_directory)
 
@@ -34,8 +96,9 @@ print(f" -->> audio_file_path = {audio_file_path}")
 
 
 
+
 # #### Langchain 모델 및 map-reduce 체인 설정
-llm = ChatOpenAI(temperature=0, openai_api_key=API_KEY)
+llm = ChatOpenAI(temperature=1, openai_api_key=API_KEY)
 
 # text_splitter 설정
 text_splitter = RecursiveCharacterTextSplitter(
@@ -56,7 +119,7 @@ map_prompt = PromptTemplate.from_template(map_template)
 reduce_template = """The following is set of summaries:
 {doc_summaries}
 Take these and distill it into a final, consolidated summary of the main themes.
-The final answer is a single paragraph of about 100 words and must be in Korean.
+The final answer is a single paragraph of about 200 words and must be in Korean.
 Helpful Answer:"""
 
 reduce_prompt = PromptTemplate.from_template(reduce_template)
@@ -103,17 +166,19 @@ map_reduce_chain = MapReduceDocumentsChain(
     return_intermediate_steps=False,
 )
 
+
 try:
     print("🟢 speechToTextAPI_X 시작")
     start_time = time.time()  # 시작 시간 기록
     
     if not os.path.exists(audio_file_path):
         raise FileNotFoundError("오디오 파일을 찾을 수 없습니다.")
-    
+
     # tiny, base, small, medium, large
-    model = whisper.load_model('base')
+    model = whisper.load_model('medium')
     result = model.transcribe(audio_file_path)
     print(result['text'])
+    
     print(str(len(result['text'])) + "자")
 
     # text_split
@@ -126,10 +191,11 @@ try:
 
     print(sum_result)
     
+    
+    
     end_time = time.time()  # 종료 시간 기록
     elapsed_time = end_time - start_time  # 전체 실행 시간 계산
     print(f"🔵 프로그램 소요 시간: {elapsed_time:.2f} 초")  # 실행 시간 출력
-    
 
 except FileNotFoundError as e:
     print(f"오디오 파일을 찾을 수 없습니다.")
