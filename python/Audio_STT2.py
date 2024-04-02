@@ -21,115 +21,116 @@ load_dotenv()
 API_KEY = os.getenv("OPENAI_API_KEY")
 
 def process_youtube_url(url):
-    print("🟢 영상 요약 시작")
-
-    # YouTube 객체 생성
-    yt = YouTube(url)
-
-    # 폴더 경로 설정
-    output_folder = os.path.join('./assets', 'audio')
-    os.makedirs(output_folder, exist_ok=True)  # 만약 폴더가 존재하지 않으면 생성
-
-    # 파일명으로 허용되지 않는 문자 제거 및 공백 대체
-    cleaned_title = re.sub(r'[^\w\s-]', '', yt.title).strip().replace(' ', '_')
-
-    # 썸네일 이미지 가져오기
-    thumbnail_url = yt.thumbnail_url
-
-    # 영상의 길이(초) 가져오기
-    video_length_seconds = yt.length
-
-    # 오디오 다운로드
-    audio_file_path = os.path.join(output_folder, cleaned_title + '.mp3')
-    yt.streams.filter(only_audio=True).first().download(
-        output_path=output_folder, filename=cleaned_title + '.mp3'
-    )
-
-    # JSON data (video title, URL, and thumbnail URL)
-    data = {
-        cleaned_title :{
-            'title': yt.title,
-            "url": url,
-            "thumbnail_url": thumbnail_url,
-            "video_duration" : video_length_seconds
-        }
-    }
-
-    json_file_path = os.path.join('assets', 'audio_urls.json')
-
-    # JSON 파일이 이미 존재하는 경우 데이터 추가
-    if os.path.exists(json_file_path):
-        with open(json_file_path, 'r', encoding='utf-8') as f:  # UTF-8 인코딩으로 파일 열기
-            existing_data = json.load(f)
-        existing_data.update(data)
-        data = existing_data
-
-    with open(json_file_path, 'w', encoding='utf-8') as f:  # UTF-8 인코딩으로 파일 쓰기
-        json.dump(data, f, indent=4, ensure_ascii=False)
-
-    print("🔵 오디오 추출 완료")
-
-    audio_file_name = f"{cleaned_title}.mp3"
-    additional_path = r"assets\audio"  # 추가적인 경로
-
-    # 스크립트 파일이 있는 디렉토리의 절대 경로를 기반으로 오디오 파일의 경로를 설정합니다.
-    # script_directory는 현재 파이썬 프로젝트가 있는 위치를 말함
-    script_directory = os.path.dirname(os.path.abspath(__file__))
-    MEMO_AI_directory = os.path.dirname(script_directory)
-
-    # 경로를 조립해서 오디오파일 경로로 만듦
-    audio_file_path = os.path.join(MEMO_AI_directory, additional_path, audio_file_name)
-    print(f" -->> 오디오 파일 경로 : {audio_file_path}")
-
-    # Langchain 모델 및 map-reduce 체인 설정
-    llm = ChatOpenAI(temperature=1, openai_api_key=API_KEY)
-
-    # text_splitter 설정
-    text_splitter = RecursiveCharacterTextSplitter(
-        chunk_size=1000,
-        chunk_overlap=50,
-        length_function=len,
-    )
-
-    # Map prompt
-    map_template = """The following is a set of documents
-    {docs}
-    Based on this list of docs, please identify the main themes
-    Helpful Answer:"""
-
-    map_prompt = PromptTemplate.from_template(map_template)
-
-    # Reduce prompt
-    reduce_template = """The following is set of summaries:
-    {doc_summaries}
-    Take these and distill it into a final, consolidated summary of the main themes.
-    The final answer is a single paragraph of about 200 words and must be in Korean.
-    Helpful Answer:"""
-
-    reduce_prompt = PromptTemplate.from_template(reduce_template)
-
-    # Reduce chain
-    reduce_chain = LLMChain(llm=llm, prompt=reduce_prompt)
-    combine_documents_chain = StuffDocumentsChain(
-        llm_chain=reduce_chain, document_variable_name="doc_summaries"
-    )
-    reduce_documents_chain = ReduceDocumentsChain(
-        combine_documents_chain=combine_documents_chain,
-        token_max=4000,
-    )
-
-    # Map chain
-    map_chain = LLMChain(llm=llm, prompt=map_prompt)
-
-    # Map-reduce chain 설정
-    map_reduce_chain = MapReduceDocumentsChain(
-        llm_chain=map_chain,
-        reduce_documents_chain=reduce_documents_chain,
-        document_variable_name="docs",
-        return_intermediate_steps=False,
-    )
-
     try:
+        print("🟢 영상 요약 시작")
+
+        # YouTube 객체 생성
+        yt = YouTube(url)
+
+        # 폴더 경로 설정
+        output_folder = os.path.join('./assets', 'audio')
+        os.makedirs(output_folder, exist_ok=True)  # 만약 폴더가 존재하지 않으면 생성
+
+        # 파일명으로 허용되지 않는 문자 제거 및 공백 대체
+        cleaned_title = re.sub(r'[^\w\s-]', '', yt.title).strip().replace(' ', '_')
+
+        # 썸네일 이미지 가져오기
+        thumbnail_url = yt.thumbnail_url
+
+        # 영상의 길이(초) 가져오기
+        video_length_seconds = yt.length
+
+        # 오디오 다운로드
+        audio_file_path = os.path.join(output_folder, cleaned_title + '.mp3')
+        yt.streams.filter(only_audio=True).first().download(
+            output_path=output_folder, filename=cleaned_title + '.mp3'
+        )
+
+        # JSON data (video title, URL, and thumbnail URL)
+        data = {
+            cleaned_title :{
+                'title': yt.title,
+                "url": url,
+                "thumbnail_url": thumbnail_url,
+                "video_duration" : video_length_seconds
+            }
+        }
+
+        json_file_path = os.path.join('assets', 'audio_urls.json')
+
+        # JSON 파일이 이미 존재하는 경우 데이터 추가
+        if os.path.exists(json_file_path):
+            with open(json_file_path, 'r', encoding='utf-8') as f:  # UTF-8 인코딩으로 파일 열기
+                existing_data = json.load(f)
+            existing_data.update(data)
+            data = existing_data
+
+        with open(json_file_path, 'w', encoding='utf-8') as f:  # UTF-8 인코딩으로 파일 쓰기
+            json.dump(data, f, indent=4, ensure_ascii=False)
+
+        print("🔵 오디오 추출 완료")
+
+        audio_file_name = f"{cleaned_title}.mp3"
+        additional_path = r"assets\audio"  # 추가적인 경로
+
+        # 스크립트 파일이 있는 디렉토리의 절대 경로를 기반으로 오디오 파일의 경로를 설정합니다.
+        # script_directory는 현재 파이썬 프로젝트가 있는 위치를 말함
+        script_directory = os.path.dirname(os.path.abspath(__file__))
+        MEMO_AI_directory = os.path.dirname(script_directory)
+
+        # 경로를 조립해서 오디오파일 경로로 만듦
+        audio_file_path = os.path.join(MEMO_AI_directory, additional_path, audio_file_name)
+        print(f" -->> 오디오 파일 경로 : {audio_file_path}")
+
+        # Langchain 모델 및 map-reduce 체인 설정
+        llm = ChatOpenAI(temperature=1, openai_api_key=API_KEY)
+
+        # text_splitter 설정
+        text_splitter = RecursiveCharacterTextSplitter(
+            chunk_size=1000,
+            chunk_overlap=50,
+            length_function=len,
+        )
+
+        # Map prompt
+        map_template = """The following is a set of documents
+        {docs}
+        Based on this list of docs, please identify the main themes
+        Helpful Answer:"""
+
+        map_prompt = PromptTemplate.from_template(map_template)
+
+        # Reduce prompt
+        reduce_template = """The following is set of summaries:
+        {doc_summaries}
+        Take these and distill it into a final, consolidated summary of the main themes.
+        The final answer is a single paragraph of about 200 words and must be in Korean.
+        Helpful Answer:"""
+
+        reduce_prompt = PromptTemplate.from_template(reduce_template)
+
+        # Reduce chain
+        reduce_chain = LLMChain(llm=llm, prompt=reduce_prompt)
+        combine_documents_chain = StuffDocumentsChain(
+            llm_chain=reduce_chain, document_variable_name="doc_summaries"
+        )
+        reduce_documents_chain = ReduceDocumentsChain(
+            combine_documents_chain=combine_documents_chain,
+            token_max=4000,
+        )
+
+        # Map chain
+        map_chain = LLMChain(llm=llm, prompt=map_prompt)
+
+        # Map-reduce chain 설정
+        map_reduce_chain = MapReduceDocumentsChain(
+            llm_chain=map_chain,
+            reduce_documents_chain=reduce_documents_chain,
+            document_variable_name="docs",
+            return_intermediate_steps=False,
+        )
+
+    
         print("🟢 speechToTextLocal 시작")
         start_time = time.time()  # 시작 시간 기록
         
