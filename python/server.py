@@ -6,19 +6,12 @@ import whisper
 import re
 import time
 from Audio_STT2 import process_youtube_url  # Audio_STT2 모듈에서 함수 import
-from dotenv import load_dotenv
-import logging  # 로깅 모듈 추가
+
 
 app = Flask(__name__)
 
 # CORS 설정
 CORS(app)
-
-# .env 파일에서 환경 변수 로드
-load_dotenv()
-
-# API 키 가져오기
-API_KEY = os.getenv("OPENAI_API_KEY")
 
 @app.route('/summaryurl', methods=['POST'])
 def summarize_url():

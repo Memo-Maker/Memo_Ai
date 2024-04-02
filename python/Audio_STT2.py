@@ -21,7 +21,7 @@ load_dotenv()
 API_KEY = os.getenv("OPENAI_API_KEY")
 
 def process_youtube_url(url):
-    print("🟢 extractAudio.py 시작")
+    print("🟢 영상 요약 시작")
 
     # YouTube 객체 생성
     yt = YouTube(url)
@@ -67,7 +67,7 @@ def process_youtube_url(url):
     with open(json_file_path, 'w', encoding='utf-8') as f:  # UTF-8 인코딩으로 파일 쓰기
         json.dump(data, f, indent=4, ensure_ascii=False)
 
-    print("🔴 extractAudio.py 종료")
+    print("🔵 오디오 추출 완료")
 
     audio_file_name = f"{cleaned_title}.mp3"
     additional_path = r"assets\audio"  # 추가적인 경로
@@ -79,7 +79,7 @@ def process_youtube_url(url):
 
     # 경로를 조립해서 오디오파일 경로로 만듦
     audio_file_path = os.path.join(MEMO_AI_directory, additional_path, audio_file_name)
-    print(f" -->> audio_file_path = {audio_file_path}")
+    print(f" -->> 오디오 파일 경로 : {audio_file_path}")
 
     # Langchain 모델 및 map-reduce 체인 설정
     llm = ChatOpenAI(temperature=1, openai_api_key=API_KEY)
@@ -130,7 +130,7 @@ def process_youtube_url(url):
     )
 
     try:
-        print("🟢 speechToTextAPI_X 시작")
+        print("🟢 speechToTextLocal 시작")
         start_time = time.time()  # 시작 시간 기록
         
         if not os.path.exists(audio_file_path):
@@ -141,12 +141,12 @@ def process_youtube_url(url):
         result = model.transcribe(audio_file_path)
         print(result['text'])
         
-        print(str(len(result['text'])) + "자")
+        print("🔵" + str(len(result['text'])) + "자")
 
         # text_split
         docs = [Document(page_content=x) for x in text_splitter.split_text(result["text"])]
         split_docs = text_splitter.split_documents(docs)
-        print(f"split_docs : {len(split_docs)} 개")
+        print(f" 🔵split_docs : {len(split_docs)} 개")
 
         # 내용 요약 시작
         sum_result = map_reduce_chain.run(split_docs)
