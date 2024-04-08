@@ -1,3 +1,6 @@
+# Audio_STT.py
+# 오디오 추출 및 STT 작업
+
 from pytube import YouTube
 import re
 import os

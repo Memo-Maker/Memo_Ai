@@ -1,7 +1,7 @@
 from flask import Flask, request, jsonify
 from flask_cors import CORS  # Flask-CORS import
 
-from Audio_STT2 import process_youtube_url  # Audio_STT2 모듈에서 함수 import
+from Audio_STT_Summary import process_youtube_url  # Audio_STT2 모듈에서 함수 import
 from gptQueryOpenai_API import qa_gpt
 
 
@@ -9,6 +9,10 @@ app = Flask(__name__)
 
 # CORS 설정
 CORS(app)
+
+@app.route('/')
+def index():
+    return 'Hello World!'
 
 # 영상요약
 @app.route('/summaryurl', methods=['POST'])
@@ -53,4 +57,4 @@ def question_url():
         return jsonify({'error': str(e)}), 500
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run('0.0.0.0', port=5001, debug=True)
