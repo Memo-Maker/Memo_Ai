@@ -14,6 +14,10 @@ CORS(app)
 def index():
     return 'Hello World!'
 
+@app.route('/')
+def index():
+    return 'Hello World!'
+
 # 영상요약
 @app.route('/summaryurl', methods=['POST'])
 def summarize_url():
@@ -48,7 +52,7 @@ def question_url():
         print(f"받은 질문 : {question}")
         
         # gptQueryOpenai_API 모듈에서 정의된 함수 호출
-        qAnswer = qa_gpt(question)
+        qAnswer = questionToGPT(question)
         print(f" 🟡  [ 답변 ]\n  {qAnswer}")  # 로그 출력
 
         return jsonify({'qAnswer': qAnswer}), 200
