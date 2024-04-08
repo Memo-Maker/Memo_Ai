@@ -1,8 +1,8 @@
 from flask import Flask, request, jsonify
 from flask_cors import CORS  # Flask-CORS import
 
-from summary_youtube import process_youtube_url  # Audio_STT2 모듈에서 함수 import
-from gptQueryOpenai_API import questionToGPT
+from Audio_STT_Summary import process_youtube_url  # Audio_STT2 모듈에서 함수 import
+from GptQueryOpenai_API import questionToGPT
 
 
 app = Flask(__name__)

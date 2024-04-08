@@ -1,3 +1,5 @@
+# Audio_STT_summary.py
+
 from pytube import YouTube
 import re
 import os
@@ -109,24 +111,45 @@ def process_youtube_url(url):
 
         reduce_prompt = PromptTemplate.from_template(reduce_template)
 
-        # Reduce chain
+        # 1. Reduce chain
+        # 조각을 합쳐서 요약
         reduce_chain = LLMChain(llm=llm, prompt=reduce_prompt)
+
+        # Takes a list of documents, combines them into a single string, and passes this to an LLMChain
+        # 내용의 리스트(조각)를 가져와 하나의 문자열로 결합하고 이를 LLMChain으로 전달합니다.
         combine_documents_chain = StuffDocumentsChain(
             llm_chain=reduce_chain, document_variable_name="doc_summaries"
         )
+
+        # Combines and iteravely reduces the mapped documents
+        # 매핑된 문서를 결합하고 반복적으로 축소합니다.
         reduce_documents_chain = ReduceDocumentsChain(
+            # This is final chain that is called.
+            # 호출되는 최종 체인입니다.
             combine_documents_chain=combine_documents_chain,
+            # If documents exceed context for `StuffDocumentsChain`
+            # `StuffDocumentsChain`의 컨텍스트를 초과할 경우
+            collapse_documents_chain=combine_documents_chain,
+            # The maximum number of tokens to group documents into.
+            # 문서를 그룹화하는 데 사용되는 최대 토큰 수입니다.
             token_max=4000,
         )
 
-        # Map chain
+        # 2. Map chain
         map_chain = LLMChain(llm=llm, prompt=map_prompt)
 
-        # Map-reduce chain 설정
+        # Combining documents by mapping a chain over them, then combining results
+        # 문서에 체인을 매핑하고 결과를 결합하여 문서를 만듭니다.
         map_reduce_chain = MapReduceDocumentsChain(
+            # Map chain
             llm_chain=map_chain,
+            # Reduce chain
             reduce_documents_chain=reduce_documents_chain,
+            # The variable name in the llm_chain to put the documents in
+            # llm 체인 내의 문서를 넣을 변수 이름
             document_variable_name="docs",
+            # Return the results of the map steps in the output
+            # 중간 단계의 결과를 출력으로 반환할지 여부
             return_intermediate_steps=False,
         )
 
@@ -168,5 +191,5 @@ def process_youtube_url(url):
     return sum_result
 
 if __name__ == "__main__":
-    url = input("URL 입력 : ")
+    url = input("\n\nURL 입력 : ")
     process_youtube_url(url)

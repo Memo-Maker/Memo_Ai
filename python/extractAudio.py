@@ -1,3 +1,7 @@
+# extractAudio.py
+# 유튜브 영상을 오디로로 추출함
+# title, url, thumbnail_url, video_duration 저장
+
 from pytube import YouTube
 import re
 import os
