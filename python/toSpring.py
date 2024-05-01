@@ -10,7 +10,7 @@ def send_answer_to_spring_server(userId, videoUrl, question, qAnswer):
 
         # POST 요청에 보낼 데이터 설정
         data = {
-            'member_email': userId,
+            'memberEmail': userId,
             'videoUrl': videoUrl,
             'question': question,
             'answer': qAnswer
