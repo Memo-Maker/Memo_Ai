@@ -188,7 +188,7 @@ def process_youtube_url(url):
     except Exception as e:
         print(f"오류 발생: {e}")
 
-    return sum_result
+    return cleaned_title, url, thumbnail_url, sum_result
 
 if __name__ == "__main__":
     url = input("\n\nURL 입력 : ")
