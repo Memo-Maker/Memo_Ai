@@ -37,8 +37,8 @@ def send_summary_to_spring_server(userId, url, cleaned_title, thumbnail_url, sum
 
         # POST 요청에 보낼 데이터 설정
         data = {
-            'userId': userId,
-            'url': url,
+            'memberEmail': userId,
+            'videoUrl': url,
             'cleaned_title' : cleaned_title,
             'thumbnail_url' : thumbnail_url,
             'sum_result': sum_result
