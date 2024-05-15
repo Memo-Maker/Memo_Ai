@@ -1,4 +1,5 @@
 import requests
+from datetime import datetime  # datetime 모듈을 import 합니다.
 
 SPRING_BASE_URL = "http://localhost:8080";
 
@@ -34,6 +35,9 @@ def send_summary_to_spring_server(userId, url, cleaned_title, thumbnail_url, sum
     try:
         # 스프링 서버의 URL 설정
         spring_server_url = f"{SPRING_BASE_URL}/api/v1/questions/fetch-from-flask"
+        
+        # 현재 날짜를 "YYYY-MM-DD" 형식으로 설정
+        document_date = datetime.now().strftime("%Y-%m-%d")
 
         # POST 요청에 보낼 데이터 설정
         data = {
@@ -41,7 +45,8 @@ def send_summary_to_spring_server(userId, url, cleaned_title, thumbnail_url, sum
             'videoUrl': url,
             'cleaned_title' : cleaned_title,
             'thumbnail_url' : thumbnail_url,
-            'sum_result': sum_result
+            'sum_result': sum_result,
+            'documentDate': document_date  # documentDate 추가
         }
 
         # POST 요청 보내기
