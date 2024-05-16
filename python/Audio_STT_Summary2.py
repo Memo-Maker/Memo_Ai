@@ -5,6 +5,7 @@ import re
 import os
 import json
 import whisper
+import openai
 import time
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain.schema.document import Document
@@ -163,9 +164,14 @@ def process_youtube_url(url):
             raise FileNotFoundError("오디오 파일을 찾을 수 없습니다.")
 
         # tiny, base, small, medium, large
-        print("STT를 Local에서 하겠습니다")
-        model = whisper.load_model('base')
-        result = model.transcribe(audio_file_path)
+        # model = whisper.load_model('base')
+        # result = model.transcribe(audio_file_path)
+        with open(audio_file_path, 'rb') as audio_file:
+            # 오디오 -> 텍스트 변환
+            print("STT를 API를 사용해서 하겠습니다")
+            result = openai.Audio.transcribe('whisper-1', audio_file)
+            print(result['text'])
+        
         print(" [영상 속 텍스트]\n" + result['text'])
         
         print(" 🔵 " + str(len(result['text'])) + "자")
