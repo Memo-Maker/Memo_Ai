@@ -124,5 +124,11 @@
         "url": "https://www.youtube.com/watch?v=6_CPp9XQeCM",
         "thumbnail_url": "https://i.ytimg.com/vi/6_CPp9XQeCM/sddefault.jpg",
         "video_duration": 1205
+    },
+    "실검_1위_해외_직구": {
+        "title": "실검 1위 해외 직구",
+        "url": "https://www.youtube.com/watch?v=VTrAIQCPBA4",
+        "thumbnail_url": "https://i.ytimg.com/vi/VTrAIQCPBA4/sddefault.jpg",
+        "video_duration": 171
     }
 }

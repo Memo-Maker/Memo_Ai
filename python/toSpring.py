@@ -34,7 +34,7 @@ def send_answer_to_spring_server(userId, videoUrl, question, qAnswer):
 def send_summary_to_spring_server(userId, url, cleaned_title, thumbnail_url, sum_result):
     try:
         # 스프링 서버의 URL 설정
-        spring_server_url = f"{SPRING_BASE_URL}/api/v1/questions/fetch-from-flask"
+        spring_server_url = f"{SPRING_BASE_URL}/api/v1/video/save"
         
         # 현재 날짜를 "YYYY-MM-DD" 형식으로 설정
         document_date = datetime.now().strftime("%Y-%m-%d")
@@ -42,10 +42,11 @@ def send_summary_to_spring_server(userId, url, cleaned_title, thumbnail_url, sum
         # POST 요청에 보낼 데이터 설정
         data = {
             'memberEmail': userId,
+            "categoryName": "최근에 본 영상",
             'videoUrl': url,
-            'cleaned_title' : cleaned_title,
-            'thumbnail_url' : thumbnail_url,
-            'sum_result': sum_result,
+            'videoTitle': cleaned_title,
+            'thumbnailUrl': thumbnail_url,
+            'summary': sum_result,
             'documentDate': document_date  # documentDate 추가
         }
 

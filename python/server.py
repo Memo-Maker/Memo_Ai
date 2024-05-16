@@ -25,6 +25,7 @@ def summarize_url():
         url = data.get('url')
         userId = data.get('userId')
         print(f"userId={userId}님이 url:{url}의 영상 요약을 요청했습니다")
+        print("중복 확인 하겠습니다.")
         
         if not url:
             return jsonify({' 🟡 error': '유튜브 URL을 제공해주세요.'}), 400
