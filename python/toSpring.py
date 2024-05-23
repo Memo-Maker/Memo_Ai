@@ -2,6 +2,7 @@ import requests
 from datetime import datetime  # datetime 모듈을 import 합니다.
 
 SPRING_BASE_URL = "http://localhost:8080";
+# SPRING_BASE_URL = "http://localhost:8080";
 
 # 질문
 def send_answer_to_spring_server(userId, videoUrl, question, qAnswer):
@@ -38,6 +39,9 @@ def send_summary_to_spring_server(userId, url, cleaned_title, thumbnail_url, sum
         
         # 현재 날짜를 "YYYY-MM-DD" 형식으로 설정
         document_date = datetime.now().strftime("%Y-%m-%d")
+        
+        # cleaned_title에서 "_"를 " "으로 변환
+        cleaned_title = cleaned_title.replace("_", " ")
 
         # POST 요청에 보낼 데이터 설정
         data = {

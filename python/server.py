@@ -1,8 +1,8 @@
 from flask import Flask, request, jsonify
 from flask_cors import CORS  # Flask-CORS import
-
-# from Audio_STT_Summary import process_youtube_url  # Audio_STT 모듈에서 함수 import
-from Audio_STT_Summary2 import process_youtube_url  # Audio_STT 모듈에서 함수 import
+# Audio_STT_Summary은 Local, Audio_STT_Summary2는 openAi api사용
+from Audio_STT_Summary import process_youtube_url  # Audio_STT 모듈에서 함수 import
+# from Audio_STT_Summary2 import process_youtube_url  # Audio_STT 모듈에서 함수 import
 from GptQueryOpenai_API import questionToGPT
 from toSpring import send_answer_to_spring_server
 from toSpring import send_summary_to_spring_server
