@@ -39,7 +39,14 @@ def summarize_url():
         print(f" 🟡  [요약 내용]\n  {sum_result}")  # 로그 출력
         send_summary_to_spring_server(userId, url, cleaned_title, thumbnail_url, sum_result)
         
-        return jsonify({'summary': sum_result}), 200
+        # cleaned_title에서 "_"를 " "으로 변환
+        cleaned_title = cleaned_title.replace("_", " ")
+        
+        # cleaned_title의 맨앞과 맨뒤에 있는 쌍따옴표를 제거
+        if cleaned_title.startswith('"') and cleaned_title.endswith('"'):
+            cleaned_title = cleaned_title[1:-1]
+            
+        return jsonify({'summary': sum_result, 'cleaned_title': cleaned_title}), 200
 
     except Exception as e:
         return jsonify({'error': str(e)}), 500

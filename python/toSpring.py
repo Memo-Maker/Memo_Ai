@@ -42,7 +42,11 @@ def send_summary_to_spring_server(userId, url, cleaned_title, thumbnail_url, sum
         
         # cleaned_title에서 "_"를 " "으로 변환
         cleaned_title = cleaned_title.replace("_", " ")
-
+        
+        # cleaned_title의 맨앞과 맨뒤에 있는 쌍따옴표를 제거
+        if cleaned_title.startswith('"') and cleaned_title.endswith('"'):
+            cleaned_title = cleaned_title[1:-1]
+            
         # POST 요청에 보낼 데이터 설정
         data = {
             'memberEmail': userId,
