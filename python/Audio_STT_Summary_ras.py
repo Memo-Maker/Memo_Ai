@@ -1,4 +1,5 @@
 # Audio_STT_summary.py
+# 라즈베리파이 배포용
 
 from pytube import YouTube
 import re
@@ -23,9 +24,12 @@ _default_clients["ANDROID_MUSIC"] = _default_clients["ANDROID_CREATOR"]
 load_dotenv()
 
 # API 키 가져오기
-API_KEY = os.getenv("OPENAI_API_KEY")
+openai.api_key="api키 입력"
 
 def process_youtube_url(url):
+    # sum_result 변수를 try 블록 밖에서 미리 정의
+    sum_result = None
+
     try:
         print("🟢 영상 요약 시작")
 
@@ -76,7 +80,7 @@ def process_youtube_url(url):
         print("🔵 오디오 추출 완료")
 
         audio_file_name = f"{cleaned_title}.mp3"
-        additional_path = r"assets\audio"  # 추가적인 경로
+        additional_path = r"python/assets/audio"  # 추가적인 경로
 
         # 스크립트 파일이 있는 디렉토리의 절대 경로를 기반으로 오디오 파일의 경로를 설정합니다.
         # script_directory는 현재 파이썬 프로젝트가 있는 위치를 말함
@@ -90,8 +94,9 @@ def process_youtube_url(url):
         # 현재 실행 중인 스크립트의 경로 출력
         current_script_path = os.path.abspath(__file__)
         print(f" -->> 현재 스크립트 경로 : {current_script_path}")
+        
         # Langchain 모델 및 map-reduce 체인 설정
-        llm = ChatOpenAI(temperature=1, openai_api_key=API_KEY)
+        llm = ChatOpenAI(temperature=1, openai_api_key=openai.api_key)
 
         # text_splitter 설정
         text_splitter = RecursiveCharacterTextSplitter(
@@ -164,7 +169,7 @@ def process_youtube_url(url):
         start_time = time.time()  # 시작 시간 기록
         
         if not os.path.exists(audio_file_path):
-            raise FileNotFoundError("오디오 파일을 찾을 수 없습니다.")
+            raise FileNotFoundError(f"오디오 파일을 찾을 수 없습니다. (경로: {audio_file_path})")
 
         # tiny, base, small, medium, large
         # model = whisper.load_model('base')

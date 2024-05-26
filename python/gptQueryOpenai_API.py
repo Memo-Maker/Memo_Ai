@@ -18,5 +18,5 @@ def questionToGPT(content):
     return response.choices[0].message.content
 
 if __name__ == "__main__":
-    url = input("URL 입력 : ")
+    url = input("질문 입력 : ")
     questionToGPT(url)

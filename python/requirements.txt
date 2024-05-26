@@ -1,0 +1,12 @@
+pytube
+re
+os
+json
+whisper
+openai
+langchain
+dotenv
+flask
+flask-cors
+langchain_community
+python-dotenv
