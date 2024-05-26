@@ -1,2 +1,3 @@
 nohup python3 server.py &
 
+ps ax | grep .py
