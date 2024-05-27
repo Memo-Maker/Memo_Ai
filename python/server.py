@@ -6,7 +6,7 @@ from Audio_STT_Summary import process_youtube_url  # Audio_STT 모듈에서 함�
 from GptQueryOpenai_API import questionToGPT
 from toSpring import send_answer_to_spring_server
 from toSpring import send_summary_to_spring_server
-
+from datetime import datetime  # datetime 모듈을 import 합니다.
 
 app = Flask(__name__)
 
@@ -39,6 +39,9 @@ def summarize_url():
         print(f" 🟡  [요약 내용]\n  {sum_result}")  # 로그 출력
         send_summary_to_spring_server(userId, url, cleaned_title, thumbnail_url, sum_result)
         
+        # 현재 날짜를 "YYYY-MM-DD" 형식으로 설정
+        document_date = datetime.now().strftime("%Y-%m-%d")
+        
         # cleaned_title에서 "_"를 " "으로 변환
         cleaned_title = cleaned_title.replace("_", " ")
         
@@ -46,7 +49,7 @@ def summarize_url():
         if cleaned_title.startswith('"') and cleaned_title.endswith('"'):
             cleaned_title = cleaned_title[1:-1]
             
-        return jsonify({'summary': sum_result, 'cleaned_title': cleaned_title}), 200
+        return jsonify({'summary': sum_result, 'cleaned_title': cleaned_title, 'documentDate': document_date}), 200
 
     except Exception as e:
         return jsonify({'error': str(e)}), 500

@@ -1,7 +1,8 @@
 import requests
 from datetime import datetime  # datetime 모듈을 import 합니다.
 
-SPRING_BASE_URL = "http://localhost:8080";
+# SPRING_BASE_URL = "http://localhost:8080";
+SPRING_BASE_URL = "http://taeksin.iptime.org:8081";
 # SPRING_BASE_URL = "http://localhost:8080";
 
 # 질문
@@ -46,6 +47,10 @@ def send_summary_to_spring_server(userId, url, cleaned_title, thumbnail_url, sum
         # cleaned_title의 맨앞과 맨뒤에 있는 쌍따옴표를 제거
         if cleaned_title.startswith('"') and cleaned_title.endswith('"'):
             cleaned_title = cleaned_title[1:-1]
+        
+        # sum_result 맨앞과 맨뒤에 있는 쌍따옴표를 제거
+        if sum_result.startswith('"') and sum_result.endswith('"'):
+            sum_result = sum_result[1:-1]
             
         # POST 요청에 보낼 데이터 설정
         data = {
