@@ -2,8 +2,8 @@ import requests
 from datetime import datetime  # datetime 모듈을 import 합니다.
 
 # SPRING_BASE_URL = "http://localhost:8080";
-SPRING_BASE_URL = "http://taeksin.iptime.org:8081";
-# SPRING_BASE_URL = "http://localhost:8080";
+# SPRING_BASE_URL = "http://taeksin.iptime.org:8081";
+SPRING_BASE_URL = "http://52.78.68.15:8080";
 
 # 질문
 def send_answer_to_spring_server(userId, videoUrl, question, qAnswer):

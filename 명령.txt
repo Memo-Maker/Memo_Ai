@@ -1,3 +1,5 @@
+source myenv/bin/activate
+
 nohup python3 server.py &
 nohup python3 monitoring.py &
 
