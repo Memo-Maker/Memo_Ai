@@ -1,3 +1,6 @@
 nohup python3 server.py &
+nohup python3 monitoring.py &
 
 ps ax | grep .py
+
+sudo lsof -i :5000

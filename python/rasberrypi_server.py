@@ -1,9 +1,10 @@
+import socket
 from flask import Flask, request, jsonify
 from flask_cors import CORS  # Flask-CORS import
 # Audio_STT_Summary는 Local, 
 # Audio_STT_Summary2는 openAi api사용
-from Audio_STT_Summary import process_youtube_url  # Audio_STT 모듈에서 함수 import
-# from Audio_STT_Summary2 import process_youtube_url  # Audio_STT 모듈에서 함수 import
+# from Audio_STT_Summary import process_youtube_url  # Audio_STT 모듈에서 함수 import
+from Audio_STT_Summary2 import process_youtube_url  # Audio_STT 모듈에서 함수 import
 from GptQueryOpenai_API import questionToGPT
 from toSpring import send_answer_to_spring_server
 from toSpring import send_summary_to_spring_server
@@ -79,5 +80,15 @@ def question_url():
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
+def find_free_port(start_port):
+    port = start_port
+    while True:
+        with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+            if s.connect_ex(('localhost', port)) != 0:
+                return port
+            port += 1
+
 if __name__ == '__main__':
-    app.run('0.0.0.0', port=5001, debug=True)
+    start_port = 5005
+    port = find_free_port(start_port)
+    app.run('0.0.0.0', port=port, debug=True)
